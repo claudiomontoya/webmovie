@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <h1 id="titulo"></h1>
+    <div id="pelicula">
+
+    </div>
+
+    <div id="imagen">
+
+    </div>
+
+    <div id="imagen2">
+
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            var id = getParameterByName('idPelicula');
+            getPelicula(id);
+        });
+
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        function getPelicula(id) {
+
+            $.ajax({
+                url: 'https://api.themoviedb.org/3/movie/' + id + '?api_key=a2206509622d57a6ed7e5526a8bcef32&language=es-ES',
+                type: 'GET',
+                dataType: 'json',
+                success: function(result, status, xhr) {
+
+                    console.log(result);
+
+                    var html = '<img src="https://image.tmdb.org/t/p/w500' + result.backdrop_path + '">';
+                    $("#pelicula").html(html);
+                    if (result.belongs_to_collection !== null) {
+                        html = '<img src="https://image.tmdb.org/t/p/w500' + result.belongs_to_collection.poster_path + '">';
+                        $("#imagen").html(html);
+
+                        html = '<img src="https://image.tmdb.org/t/p/w500' + result.belongs_to_collection.backdrop_path + '">';
+                        $("#imagen2").html(html);
+                    } else {
+                        html = '<img src="https://image.tmdb.org/t/p/w500' + result.poster_path + '">';
+                        $("#imagen").html(html);
+
+                    }
+
+                    $("#titulo").html(result.title);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
